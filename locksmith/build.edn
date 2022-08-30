@@ -1,2 +1,0 @@
-{:lib com.github.ivarref/locksmith
- :version "0.1.{{git/commit-count}}"}
