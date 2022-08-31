@@ -1,4 +1,5 @@
 (ns com.github.ivarref.locksmith
+  (:require [clojure.java.io :as io])
   (:import (java.util.concurrent TimeUnit)
            (okhttp3.tls HeldCertificate HeldCertificate$Builder)))
 
@@ -23,13 +24,30 @@
      :client-cert (.certificatePem client)
      :client-key  (.privateKeyPkcs8Pem client)}))
 
-(defn write-certs [opts]
+(defn set-permissions! [f]
+  (when f
+    (let [f (io/file f)]
+      (.setExecutable f false)
+      (.setReadable f false false)
+      (.setReadable f true true)
+      (.setWritable f false))))
+
+(defn write-certs! [{:keys [server-out-file client-out-file]
+                     :or {server-out-file "server.keys"
+                          client-out-file "client.keys"}
+                     :as opts}]
   (let [{:keys [ca-cert
                 server-cert server-key
                 client-cert client-key]}
         (gen-certs opts)]
-    (spit "server.keys" (str ca-cert server-cert server-key))
-    (println "Wrote server.keys")
+    (when (.exists (io/file server-out-file))
+      (.delete (io/file server-out-file)))
+    (spit server-out-file (str ca-cert server-cert server-key))
+    (set-permissions! server-out-file)
+    (println "Wrote" server-out-file)
 
-    (spit "client.keys" (str ca-cert client-cert client-key))
-    (println "Wrote client.keys")))
+    (when (.exists (io/file client-out-file))
+      (.delete (io/file client-out-file)))
+    (spit client-out-file (str ca-cert client-cert client-key))
+    (set-permissions! client-out-file)
+    (println "Wrote" client-out-file)))
