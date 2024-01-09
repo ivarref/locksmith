@@ -1,7 +1,8 @@
-{:paths   ["src"]
- :deps    {org.clojure/clojure             {:mvn/version "1.11.1"}
-           com.squareup.okhttp3/okhttp-tls {:mvn/version "4.10.0"}}
- :aliases {:build       {:deps       {com.github.liquidz/build.edn {:git/tag "0.7.145" :git/sha "776501e"}}
-                         :ns-default build-edn.main}
-           :write-certs {:exec-fn   com.github.ivarref.locksmith/write-certs!
-                         :exec-args {}}}}
+{:paths       ["src"]
+ :deps        {org.clojure/clojure             {:mvn/version "1.11.1"}
+               com.squareup.okhttp3/okhttp-tls {:mvn/version "4.10.0"}}
+ :tools/usage {:ns-default com.github.ivarref.locksmith}
+ :aliases     {:build       {:deps       {com.github.liquidz/build.edn {:git/tag "0.7.145" :git/sha "776501e"}}
+                             :ns-default build-edn.main}
+               :write-certs {:exec-fn   com.github.ivarref.locksmith/write-certs!
+                             :exec-args {}}}}
