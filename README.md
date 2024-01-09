@@ -6,7 +6,7 @@ To be used together with [nREPL](https://github.com/nrepl/nrepl).
 ## Installation
 
 ```bash
-clojure -Ttools install com.github.ivarref/locksmith '{:git/tag "0.1.9"}' :as locksmith
+clojure -Ttools install com.github.ivarref/locksmith '{:git/tag "0.1.10"}' :as locksmith
 ```
 
 ## Usage
