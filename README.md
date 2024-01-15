@@ -6,11 +6,11 @@ To be used together with [nREPL](https://github.com/nrepl/nrepl).
 ## Installation
 
 ```bash
-clojure -Ttools install com.github.ivarref/locksmith '{:git/tag "v0.1.10"}' :as locksmith
+clojure -Ttools install com.github.ivarref/locksmith '{:git/tag "v0.1.13"}' :as locksmith
 ```
 
-## Usage
+## Example usage
 
 ```bash
-clojure -Tlocksmith write-certs!
+clojure -Tlocksmith write-certs! :prefix stage
 ```
