@@ -32,22 +32,27 @@
       (.setReadable f true true)
       (.setWritable f false))))
 
-(defn write-certs! [{:keys [server-out-file client-out-file]
+(defn write-certs! [{:keys [prefix server-out-file client-out-file]
                      :or {server-out-file "server.keys"
                           client-out-file "client.keys"}
                      :as opts}]
-  (let [{:keys [ca-cert
-                server-cert server-key
-                client-cert client-key]}
-        (gen-certs opts)]
-    (when (.exists (io/file server-out-file))
-      (.delete (io/file server-out-file)))
-    (spit server-out-file (str ca-cert server-cert server-key))
-    (set-permissions! server-out-file)
-    (println "Wrote" server-out-file)
+  (if (some? prefix)
+    (write-certs! (-> opts
+                      (dissoc :prefix)
+                      (assoc :server-out-file (str prefix "-" "server.keys"))
+                      (assoc :client-out-file (str prefix "-" "client.keys"))))
+    (let [{:keys [ca-cert
+                  server-cert server-key
+                  client-cert client-key]}
+          (gen-certs opts)]
+      (when (.exists (io/file server-out-file))
+        (.delete (io/file server-out-file)))
+      (spit server-out-file (str ca-cert server-cert server-key))
+      (set-permissions! server-out-file)
+      (println "Wrote" server-out-file)
 
-    (when (.exists (io/file client-out-file))
-      (.delete (io/file client-out-file)))
-    (spit client-out-file (str ca-cert client-cert client-key))
-    (set-permissions! client-out-file)
-    (println "Wrote" client-out-file)))
+      (when (.exists (io/file client-out-file))
+        (.delete (io/file client-out-file)))
+      (spit client-out-file (str ca-cert client-cert client-key))
+      (set-permissions! client-out-file)
+      (println "Wrote" client-out-file))))
