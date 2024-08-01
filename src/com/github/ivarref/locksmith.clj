@@ -1,5 +1,6 @@
 (ns com.github.ivarref.locksmith
-  (:require [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str])
   (:import (java.util.concurrent TimeUnit)
            (okhttp3.tls HeldCertificate HeldCertificate$Builder)))
 
@@ -23,6 +24,41 @@
      :server-key  (.privateKeyPkcs8Pem serverCertificate)
      :client-cert (.certificatePem client)
      :client-key  (.privateKeyPkcs8Pem client)}))
+
+(def generate-certs gen-certs)
+
+(defn server-keys [the-keys]
+  (assert (map? the-keys))
+  (assert (contains? the-keys :ca-cert))
+  (assert (contains? the-keys :server-cert))
+  (assert (contains? the-keys :server-key))
+  (assert (str/includes? (get the-keys :ca-cert) "-----BEGIN CERTIFICATE-----"))
+  (assert (str/includes? (get the-keys :ca-cert) "-----END CERTIFICATE-----"))
+  (assert (str/includes? (get the-keys :server-cert) "-----BEGIN CERTIFICATE-----"))
+  (assert (str/includes? (get the-keys :server-cert) "-----END CERTIFICATE-----"))
+  (assert (str/includes? (get the-keys :server-key) "-----BEGIN PRIVATE KEY-----"))
+  (assert (str/includes? (get the-keys :server-key) "-----END PRIVATE KEY-----"))
+  (str (get the-keys :ca-cert)
+       (get the-keys :server-cert)
+       (get the-keys :server-key)))
+
+(defn client-keys [the-keys]
+  (assert (map? the-keys) "Argument `the-keys` must be the result from calling `gen-certs`")
+  (assert (contains? the-keys :ca-cert))
+  (assert (contains? the-keys :client-cert))
+  (assert (contains? the-keys :client-key))
+  (assert (str/includes? (get the-keys :ca-cert) "-----BEGIN CERTIFICATE-----"))
+  (assert (str/includes? (get the-keys :ca-cert) "-----END CERTIFICATE-----"))
+  (assert (str/includes? (get the-keys :client-cert) "-----BEGIN CERTIFICATE-----"))
+  (assert (str/includes? (get the-keys :client-cert) "-----END CERTIFICATE-----"))
+  (assert (str/includes? (get the-keys :client-key) "-----BEGIN PRIVATE KEY-----"))
+  (assert (str/includes? (get the-keys :client-key) "-----END PRIVATE KEY-----"))
+  (str (get the-keys :ca-cert)
+       (get the-keys :client-cert)
+       (get the-keys :client-key)))
+
+(comment
+  (server-keys (generate-certs {})))
 
 (defn set-permissions! [f]
   (when f
