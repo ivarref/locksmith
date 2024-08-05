@@ -57,6 +57,10 @@
        (get the-keys :client-cert)
        (get the-keys :client-key)))
 
+(defn certs-array-2 []
+  (let [the-keys (generate-certs)]
+    [(server-keys the-keys) (client-keys the-keys)]))
+
 (comment
   (server-keys (generate-certs {})))
 
